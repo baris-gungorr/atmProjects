@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.sql.SQLOutput;
+import java.util.Random;
 import java.util.Scanner;
 
 
@@ -58,11 +59,16 @@ public class atm {
                     System.out.println("Balance: " + amount);
 
                 case 4:
+                    System.out.println("Your Account Number..");
 
+                    Random r = new Random();
+                    int a = r.nextInt();
+                    System.out.println(a);
 
+                    default:
+                    System.out.println("Be careful not to make an incorrect keystroke! Your account may be blocked..");
 
                }
-
 
         }  else {
             System.out.println("İnsufficient !");

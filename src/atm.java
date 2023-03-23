@@ -5,79 +5,137 @@ import java.util.Scanner;
 
 
 public class atm {
-    public static void main(String[] args) {
+    
+        private static int balance = 5000;   // başlangıç bakiyesi
+        private static int withdrawLimit = 2000;   // günlük para çekme limiti
+        private static int transactionCount = 0;   // günlük işlem sayısı
+        private static int maxTransactionCount = 5;   // günlük işlem sayısı limiti
+        private static boolean running = true;   // ATM çalışıyor mu?
+        private static boolean cardInserted = false;   // kart takılı mı?
+        private static String accountNumber = "123456789";   // hesap numarası
+        private static String pin = "1234";   // PIN numarası
 
-        Scanner input  = new Scanner(System.in);
-        int select;
-        int tutar = 0;
-        int amount = 5000 ;
+        public static void main(String[] args) {
+            Scanner scanner = new Scanner(System.in);
 
-       System.out.println("*** Hi welcome to bgBank ***");
+            while (running) {
 
-        final String  parola = "ab17j4da34f156o" ;
-        String password;
+                if (!cardInserted) {
+                    System.out.println("Lütfen kartınızı takın.");
+                    System.out.println("1. Kart Tak");
+                    System.out.println("2. ATM'yi Kapat");
+                    System.out.print("Lütfen yapmak istediğiniz işlemi seçin: ");
 
-        System.out.println("Enter password!");
-        password = input.next();
+                    int choice = scanner.nextInt();
 
-        if (parola.equals(password)) {
+                    switch (choice) {
+                        case 1:
+                            insertCard(scanner);
+                            break;
+                        case 2:
+                            closeATM();
+                            break;
+                        default:
+                            System.out.println("Geçersiz seçim!");
+                    }
+                } else {
+                    System.out.println("1. Para Yatırma");
+                    System.out.println("2. Para Çekme");
+                    System.out.println("3. Bakiye Sorgulama");
+                    System.out.println("4. Günlük Limitleri Sıfırla");
+                    System.out.println("5. Kart Çıkart");
+                    System.out.print("Lütfen yapmak istediğiniz işlemi seçin: ");
 
-            System.out.println("Correct!");
-            System.out.println("###########");
-        } else
-            System.out.println("İncorrect!");
+                    int choice = scanner.nextInt();
 
-        if (parola.equals(password)) {
-            System.out.println("What is the action you want to do? ?");
-            System.out.println("*** Process ***");
-            System.out.println("1-> Deposit..");
-            System.out.println("2-> Withdraw Money..");
-            System.out.println("3-> Balance Questioning..");
-            System.out.println("4-> Account Number Questioning..");
-
-            select = input.nextInt();
-            switch (select) {
-                case 1:
-                    System.out.println("Current Balance: " + amount);
-                    System.out.println("Want to deposit ?");
-                    tutar = input.nextInt();
-                    System.out.println("Preparing..");
-                    System.out.println("Current : " + (amount+tutar));
-
-                    System.out.println("You can Continue By Returning To The Main Menu...");
-
-                case 2:
-                    int guncelBakiye = amount+tutar;
-                    System.out.println("Current  " + guncelBakiye);
-                    System.out.println("The amount you want to withdraw ?");
-                    tutar = input.nextInt();
-                    System.out.println("Current: " + (guncelBakiye-tutar));
-
-                    System.out.println(" You can continue by returning to the main menu...");
-
-                case 3:
-                    System.out.println("Balance: " + amount);
-
-                case 4:
-                    System.out.println("Your Account Number..");
-
-                    Random r = new Random();
-                    int a = r.nextInt();
-                    System.out.println(a);
-
-                    default:
-                    System.out.println("Be careful not to make an incorrect keystroke! Your account may be blocked..");
-
-               }
-
-        }  else {
-            System.out.println("İnsufficient !");
+                    switch (choice) {
+                        case 1:
+                            deposit(scanner);
+                            break;
+                        case 2:
+                            withdraw(scanner);
+                            break;
+                        case 3:
+                            checkBalance();
+                            break;
+                        case 4:
+                            resetDailyLimit();
+                            break;
+                        case 5:
+                            ejectCard();
+                            break;
+                        default:
+                            System.out.println("Geçersiz seçim!");
+                    }
+                }
+            }
         }
+
+        private static void insertCard(Scanner scanner) {
+            System.out.print("Hesap numaranızı girin: ");
+            String accountNumberInput = scanner.next();
+
+            System.out.print("PIN numaranızı girin: ");
+            String pinInput = scanner.next();
+
+            if (accountNumberInput.equals(accountNumber) && pinInput.equals(pin)) {
+                cardInserted = true;
+                System.out.println("Hoş geldiniz!");
+            } else {
+                System.out.println("Hesap numaranız veya PIN numaranız yanlış.");
+            }
         }
-       }
 
+        private static void ejectCard() {
+            cardInserted = false;
+            System.out.println("Kartınız çıkarıldı.");
+        }
 
+        private static void deposit(Scanner scanner) {
+            System.out.print("Yatırmak istediğiniz miktarı girin: ");
+            int depositAmount = scanner.nextInt();
+            if (depositAmount > 0) {
 
+                balance += depositAmount;
+                System.out.println("Yatırımınız başarıyla tamamlandı.");
+                System.out.println("Güncel bakiyeniz: " + balance);
+                transactionCount++;
+            } else {
+                System.out.println("Geçersiz miktar!");
+            }
+        }
+
+        private static void withdraw(Scanner scanner) {
+            if (transactionCount >= maxTransactionCount) {
+                System.out.println("Günlük işlem limitinize ulaştınız.");
+            } else {
+                System.out.print("Çekmek istediğiniz miktarı girin: ");
+                int withdrawAmount = scanner.nextInt();
+                if (withdrawAmount > 0 && withdrawAmount <= balance && withdrawAmount <= withdrawLimit) {
+                    balance -= withdrawAmount;
+                    System.out.println("Çekiminiz başarıyla tamamlandı.");
+                    System.out.println("Güncel bakiyeniz: " + balance);
+                    transactionCount++;
+                } else {
+                    System.out.println("Geçersiz miktar veya limit aşıldı!");
+                }
+            }
+        }
+
+        private static void checkBalance() {
+            System.out.println("Güncel bakiyeniz: " + balance);
+        }
+
+        private static void resetDailyLimit() {
+            transactionCount = 0;
+            System.out.println("Günlük limitler sıfırlandı.");
+        }
+
+        private static void closeATM() {
+            running = false;
+            System.out.println("ATM kapatılıyor.");
+        }
+    }
 
 
 

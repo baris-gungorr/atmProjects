@@ -5,7 +5,10 @@ import java.util.Scanner;
 
 
 public class atm {
-    
+
+    /**
+     * @author  barisGungor,2021
+     */
         private static int balance = 5000;   // başlangıç bakiyesi
         private static int withdrawLimit = 2000;   // günlük para çekme limiti
         private static int transactionCount = 0;   // günlük işlem sayısı
@@ -133,7 +136,7 @@ public class atm {
 
         private static void closeATM() {
             running = false;
-            System.out.println("ATM kapatılıyor.");
+            System.out.println("ATM kapatılıyor..");
         }
     }
 
